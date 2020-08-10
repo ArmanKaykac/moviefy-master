@@ -1,0 +1,150 @@
+<div>
+      <div class="flexbox"  fxFlex="100" fxLayout="column" fxLayoutAlign="start center">
+        <div class="search" fxLayout="column">
+          <h1 fxLayoutAlign="center"> MOVIEFY </h1>
+          <hr style="color: white; font-size: 5px;" id="cizgi">
+          <div class="search" fxLayoutAlign="center">
+            <input
+              type="text"
+              placeholder="     Film ara . . ."
+              required  #movieSearchInput
+              matInput>
+          </div>
+        </div>
+
+        <div>
+          <mat-card *ngIf="isSearching" style="opacity:0.5; padding:5px">
+            <mat-card-header>
+              <mat-card-title> <h1>ARANIYOR...</h1> </mat-card-title>
+            </mat-card-header>
+            <mat-card-actions fxLayoutAlign="end start">
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+</div>
+
+<!-- ##FILM ARAMASI !-->
+<div id="output" fxLayout="column"  fxLayoutAlign="start space-around" >
+  <mat-tab-group style="overflow: hidden;">
+    <mat-tab label="Filmler">
+      <div class="filmlistesi" fxLayoutAlign="start center" fxLayout="column" style="margin: 30px;">
+
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <mat-icon class="md-icon2" > movie </mat-icon>
+        <h1 *ngIf="movieSearchInput.value ==''" style="font-weight: lighter"> Film aratmak için büyüteçe tıkla! </h1>
+         <h1 *ngIf="movieSearchInput.value!=''"> "{{movieSearchInput.value}}" için sonuçlar gösteriliyor... </h1>
+        </div>
+
+    <div fxLayout="row wrap" fxLayoutAlign="center space-around" fxLayoutGap="5px" style="margin: 30px;">
+      <div  [fxFlex.md]="'40'"
+        [fxFlex.sm]="'80'"
+        [fxFlex.lg]="'30' "
+        [fxFlex.xl]="'19'"
+        *ngFor="let movie of searchResults['results']" style="margin-top: 50px">
+
+
+          <mat-card appMaterialElevation class="img__wrap" fxLayout="column" fxLayoutAlign="center center"  style="margin: 30px;">
+            <span class="top-right"> {{movie.vote_average}} </span>
+             <img mat-card-image class="img__img" src="{{this.imagebaseUrl + movie['poster_path']}}">
+              <div class="cardoverlay" fxLayoutAlign="start center" fxLayout="column" fxLayoutGap="15%" fxFlexFill>
+              <span class="title" fxLayoutAlign="center center" > {{movie.title}} </span>
+              <span  class="overview" fxLayoutAlign="center center"> {{movie.overview | slice:0:100}}...</span>
+
+                <button mat-icon-button  class="btn_detay" (click)="getDetailsInDialog(movie.id)" fxLayout="row" fxLayoutAlign="center center">
+                 <span class="material-icons" style="font-size: 35px"> info </span>detay
+                </button>
+
+                <button mat-fab clickColor color='red' fxLayoutAlign="center end" class="btn_begen"  (click)="onClick2(movie.id,movie.title);">
+                <mat-icon> favorite </mat-icon>
+               </button>
+            </div>
+          </mat-card>
+      </div>
+    </div>
+      </div>
+
+    </mat-tab>
+    <mat-tab label="Size Öneriler">
+      <div class="filmlistesi" fxLayoutAlign="start center" fxLayout="column" style="margin: 30px;">
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <mat-icon class="md-icon2" > play_circle_outline </mat-icon>
+        <h1 style="font-weight: lighter"> Beğendiğin filmlere göre önerilerimiz </h1>
+      </div>
+
+      <mat-chip-list *ngIf="suggestedMovies['data'] != null">
+        <mat-chip (click)="this.sortType='title'; this.pushMovies() "> İsim </mat-chip>
+        <mat-chip (click)="this.sortType='release_date'; this.pushMovies()">Çıkış tarihi</mat-chip>
+        <mat-chip (click)="this.sortType='vote_average'; this.pushMovies()">Puan</mat-chip>
+        <mat-chip (click)="this.sortType='popularity'; this.pushMovies()">Popülerlik</mat-chip>
+      </mat-chip-list>
+
+      <div fxLayout="row wrap" fxLayoutAlign="center space-between" fxLayoutGap="5px" style="margin: 30px; width:100% !important;" >
+    <div
+      [fxFlex.md]="'40'"
+      [fxFlex.sm]="'80'"
+      [fxFlex.lg]="'19' "
+      [fxFlex.xl]="'19'"
+      *ngFor="let movie of suggestedMovies['data']" style="margin-top: 50px">
+
+      <mat-card appMaterialElevation class="img__wrap" fxLayout="column" fxLayoutAlign="center center"  style="margin: 30px;">
+        <span class="top-right"> {{movie.vote_average}} </span>
+        <img mat-card-image class="img__img" src="{{this.imagebaseUrl + movie['poster_path']}}">
+        <div class="cardoverlay" fxLayoutAlign="start center" fxLayout="column" fxLayoutGap="15%" fxFlexFill>
+          <span class="title" fxLayoutAlign="center center" > {{movie.title}} </span>
+          <span  class="overview" fxLayoutAlign="center center"> {{movie.overview | slice:0:100}}...</span>
+
+          <button mat-icon-button  class="btn_detay"
+                  (click)="getDetailsInDialog(movie.id)"
+                  fxLayout="row"
+                  fxLayoutAlign="center center"
+          >
+            <span class="material-icons" style="font-size: 35px"> info </span>detay
+          </button>
+
+          <button mat-fab clickColor color='red' fxLayoutAlign="center end" class="btn_begen"  (click)="onClick2(movie.id,movie.title);">
+            <mat-icon> favorite </mat-icon>
+          </button>
+        </div>
+      </mat-card>
+    </div>
+      </div>
+      </div>
+    </mat-tab>
+
+
+    <mat-tab label="Begeniler">
+    <div class="filmlistesi" fxLayoutAlign="start center" fxLayout="column" style="margin: 30px;" >
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <mat-icon class="md-icon2"> thumb_up_alt </mat-icon>
+        <h1 style="font-weight: lighter"> Seçtiklerin  </h1>
+      </div>
+      <div fxLayout="row wrap" fxLayoutAlign="center space-around" fxLayoutGap="5px" style="margin: 30px; min-width:100%;"  >
+        <div [fxFlex.md]="'40'" [fxFlex.sm]="'80'" [fxFlex.lg]="'30' " [fxFlex.xl]="'19'"
+              *ngFor="let movie of likedMovies; let i = index" style="margin-top: 50px">
+            <mat-card appMaterialElevation class="img__wrap" fxLayout="column" fxLayoutAlign="center center"  style="margin: 30px;">
+              <span class="top-right"> {{movie.vote_average}} </span>
+              <img mat-card-image class="img__img" src="{{this.imagebaseUrl + movie['poster_path']}}">
+              <div class="cardoverlay" style="background: rgba(0,0,0,0)" fxLayoutAlign="start center" fxLayout="column" fxLayoutGap="15%" fxFlexFill>
+
+                <button mat-fab clickColor color='red' fxLayoutAlign="center end" class="btn_begen"
+                        (click)="likedMovies.splice(i,1);
+                                    alertifyWarn(movie.title);
+                                    pushMovies();">
+                  <mat-icon> remove </mat-icon>
+                </button>
+              </div>
+            </mat-card>
+
+        </div>
+      </div>
+    </div>
+    </mat-tab>
+
+
+  </mat-tab-group>
+</div>
+
+
+
+

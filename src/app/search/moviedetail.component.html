@@ -1,0 +1,27 @@
+<h1 mat-dialog-title style="text-align:center"  > {{data.title}} </h1>
+<style>
+  img{
+    float:right;
+  }
+
+</style>
+<div mat-dialog-content style="font-size: x-large">
+
+  <div style="text-align:right;float:right">
+    <img style="width:300px;height:300px;margin-right:15px;" src= '{{this.imagebaseUrl +  data.s}}' >
+    <h1>
+      IMDB Puanı: {{data.vote_average}}
+    </h1>
+  </div>
+
+  <p>
+    YAPIM YILI: {{data.release_date}} <br/>{{data.title}}<br/>
+    ÖZET: {{data.overview}}
+  </p>
+
+</div>
+
+<mat-dialog-actions>
+  <button mat-button style="margin-right:auto" (click)="dialogExit()" > Cıkış </button>
+  <button mat-button (click)="dialogLike();"> Beğen </button>
+</mat-dialog-actions>
